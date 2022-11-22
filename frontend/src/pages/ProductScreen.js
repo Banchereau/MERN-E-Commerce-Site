@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
 import {
   Row,
@@ -10,13 +10,22 @@ import {
   Form,
 } from 'react-bootstrap'
 import Rating from '../components/Rating'
-import products from '../products.js'
+import axios from 'axios'
 
 const ProductScreen = () => {
   const [quantity, setQuantity] = useState(1)
   const { id } = useParams()
   const navigate = useNavigate()
-  const product = products.find((x) => x._id === id)
+  const [product, setProduct] = useState({})
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      const { data } = await axios.get(`/api/products/${id}`)
+
+      setProduct(data)
+    }
+    fetchProduct()
+  }, [id])
 
   const addToCartHandler = () => {
     navigate(`/cart/${id}?quantity=${quantity}`)
