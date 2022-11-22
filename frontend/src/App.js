@@ -5,6 +5,7 @@ import Header from './components/Header'
 import Footer from './components/Footer'
 import HomeScreen from './pages/HomeScreen'
 import ProductScreen from './pages/ProductScreen'
+import CartScreen from './pages/CartScreen'
 
 const App = () => {
   return (
@@ -17,8 +18,8 @@ const App = () => {
               <Route path='/' element={<HomeScreen />}></Route>
               {/* <Route path='/login' element={<LoginScreen />}></Route> */}
               <Route path='/product/:id' element={<ProductScreen />}></Route>
-              {/* <Route path='/cart' element={<CartScreen />}></Route>
-            <Route path='/cart/:id' element={<CartScreen />}></Route> */}
+              <Route path='/cart' element={<CartScreen />}></Route>
+              <Route path='/cart/:id' element={<CartScreen />}></Route>
             </Routes>
           </Container>
         </main>
