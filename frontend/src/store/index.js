@@ -3,6 +3,7 @@ import uiSlice from './ui-slice'
 import productsSlice from './products-slice'
 import productSlice from './product-slice'
 import cartSlice from './cart-slice'
+import userSlice from './user-slice'
 
 const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ const store = configureStore({
     products: productsSlice.reducer,
     product: productSlice.reducer,
     cart: cartSlice.reducer,
+    user: userSlice.reducer,
   },
 })
 
