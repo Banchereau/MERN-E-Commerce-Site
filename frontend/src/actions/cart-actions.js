@@ -1,14 +1,15 @@
 import axios from 'axios'
-import { uiActions } from '../store/ui-slice'
 import { cartActions } from '../store/cart-slice'
 
 export const addToCart = (id, quantity) => async (dispatch, getState) => {
   try {
+    dispatch(cartActions.cartAddItemRequest())
+
     const { data } = await axios.get(`/api/products/${id}`)
 
     dispatch(
       cartActions.cartAddItem({
-        id: data._id,
+        _id: data._id,
         name: data.name,
         image: data.image,
         price: data.price,
@@ -19,14 +20,11 @@ export const addToCart = (id, quantity) => async (dispatch, getState) => {
     localStorage.setItem('cartItems', JSON.stringify(getState().cart.cartItems))
   } catch (error) {
     dispatch(
-      uiActions.showNotification({
-        status: 'error',
-        title: 'Error in cart management!',
-        message:
-          error.response && error.response.data.message
-            ? error.response.data.message
-            : error.message,
-      })
+      cartActions.cartAddItemError(
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message
+      )
     )
   }
 }
@@ -34,4 +32,14 @@ export const addToCart = (id, quantity) => async (dispatch, getState) => {
 export const removeFromCart = (id) => (dispatch, getState) => {
   dispatch(cartActions.cartRemoveItem(id))
   localStorage.setItem('cartItems', JSON.stringify(getState().cart.cartItems))
+}
+
+export const saveShippingAddress = (data) => (dispatch) => {
+  dispatch(cartActions.cartSaveAddress(data))
+  localStorage.setItem('shippingAddress', JSON.stringify(data))
+}
+
+export const savePaymentMethod = (data) => (dispatch) => {
+  dispatch(cartActions.cartSavePaymentMethod(data))
+  localStorage.setItem('paymentMethod', JSON.stringify(data))
 }

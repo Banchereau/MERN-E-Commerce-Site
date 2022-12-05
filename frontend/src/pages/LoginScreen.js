@@ -16,15 +16,13 @@ const LoginScreen = () => {
   const userInfo = useSelector((state) => state.user.userInfo)
 
   const location = useLocation()
-  const redirect = location.search ? location.search.split('=')[1] : '/'
+  const redirect = location.search ? location.search.split('=')[1] : ''
   const navigate = useNavigate()
   const notification = useSelector((state) => state.ui.notification)
 
   useEffect(() => {
-    console.log(userInfo)
     if (userInfo) {
-      console.log('redirection')
-      navigate('/')
+      navigate(`/${redirect}`)
     }
   }, [navigate, userInfo, redirect])
 

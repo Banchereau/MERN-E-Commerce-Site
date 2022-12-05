@@ -14,6 +14,7 @@ import {
 import Loader from '../components/Loader'
 import Message from '../components/Message'
 import { addToCart, removeFromCart } from '../actions/cart-actions'
+import { orderActions } from '../store/order-slice'
 
 const CartScreen = () => {
   const { id } = useParams()
@@ -26,9 +27,7 @@ const CartScreen = () => {
   const dispatch = useDispatch()
 
   const cart = useSelector((state) => state.cart)
-  const { cartItems } = cart
-
-  console.log(cart)
+  const { cartItems, status, message } = cart
 
   useEffect(() => {
     if (id) {
@@ -42,16 +41,18 @@ const CartScreen = () => {
   }
 
   const checkoutHandler = () => {
+    dispatch(orderActions.orderAddItemReset())
     navigate('/login?redirect=shipping')
-    console.log('checkout')
   }
 
   return (
     <Row>
       <Col md={8}>
         <h1>Shopping Cart</h1>
-        {location.search && cartItems.length === 0 && removedItem === false ? (
+        {status === 'pending' ? (
           <Loader />
+        ) : status === 'error' ? (
+          <Message variant='danger'>{message}</Message>
         ) : cartItems.length === 0 ? (
           <Message>
             Your cart is empty <Link to='/'>Go back</Link>
@@ -59,7 +60,7 @@ const CartScreen = () => {
         ) : (
           <ListGroup variant='flush'>
             {cartItems.map((item) => (
-              <ListGroupItem key={item.id}>
+              <ListGroupItem key={item._id}>
                 <Row>
                   <Col md={2}>
                     <Image src={item.image} alt={item.name} fluid rounded />
@@ -99,42 +100,44 @@ const CartScreen = () => {
         )}
       </Col>
       <Col md={4}>
-        <Card>
-          <ListGroup variant='flush'>
-            <ListGroupItem className='mx-auto'>
-              <Row>
-                <Col>
-                  <h2 className='mx-auto'>
-                    subtotal (
-                    {cartItems.reduce((acc, item) => acc + item.quantity, 0)})
-                    items
-                  </h2>
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <div className='text-center'>
-                    $
-                    {cartItems.reduce(
-                      (acc, item) => acc + item.quantity * item.price,
-                      0
-                    )}
-                  </div>
-                </Col>
-              </Row>
-            </ListGroupItem>
-            <ListGroupItem className='mx-auto'>
-              <Button
-                type='button'
-                className='btn-block'
-                disabled={cartItems.length === 0}
-                onClick={checkoutHandler}
-              >
-                Proceed To Checkout
-              </Button>
-            </ListGroupItem>
-          </ListGroup>
-        </Card>
+        {(status === 'success' || !id) && (
+          <Card>
+            <ListGroup variant='flush'>
+              <ListGroupItem className='mx-auto'>
+                <Row>
+                  <Col>
+                    <h2 className='mx-auto'>
+                      subtotal (
+                      {cartItems.reduce((acc, item) => acc + item.quantity, 0)})
+                      items
+                    </h2>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                    <div className='text-center'>
+                      $
+                      {cartItems.reduce(
+                        (acc, item) => acc + item.quantity * item.price,
+                        0
+                      )}
+                    </div>
+                  </Col>
+                </Row>
+              </ListGroupItem>
+              <ListGroupItem className='mx-auto'>
+                <Button
+                  type='button'
+                  className='btn-block'
+                  disabled={cartItems.length === 0}
+                  onClick={checkoutHandler}
+                >
+                  Proceed To Checkout
+                </Button>
+              </ListGroupItem>
+            </ListGroup>
+          </Card>
+        )}
       </Col>
     </Row>
   )

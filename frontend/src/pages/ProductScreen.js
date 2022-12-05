@@ -21,8 +21,8 @@ const ProductScreen = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
-  const product = useSelector((state) => state.product.product)
-  const notification = useSelector((state) => state.ui.notification)
+  const productState = useSelector((state) => state.product)
+  const { product, status, message } = productState
 
   useEffect(() => {
     dispatch(listProductDetails(id))
@@ -36,10 +36,10 @@ const ProductScreen = () => {
       <Link className='btn btn-dark my-3 rounded' to='/'>
         Go back
       </Link>
-      {notification.status === 'pending' ? (
+      {status === 'pending' ? (
         <Loader />
-      ) : notification.status === 'error' ? (
-        <Message variant='danger'>{notification.message}</Message>
+      ) : status === 'error' ? (
+        <Message variant='danger'>{message}</Message>
       ) : (
         <div>
           <div className='hidden-xs'>

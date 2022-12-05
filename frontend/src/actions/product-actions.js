@@ -1,17 +1,10 @@
 import axios from 'axios'
-import { uiActions } from '../store/ui-slice'
 import { productsActions } from '../store/products-slice'
 import { productActions } from '../store/product-slice'
 
 export const listProducts = () => async (dispatch) => {
   try {
-    dispatch(
-      uiActions.showNotification({
-        status: 'pending',
-        title: 'Sending...',
-        message: 'Sending products list',
-      })
-    )
+    dispatch(productsActions.getProductListRequest())
 
     const { data } = await axios.get('/api/products')
 
@@ -20,37 +13,20 @@ export const listProducts = () => async (dispatch) => {
         products: data || [],
       })
     )
-
-    dispatch(
-      uiActions.showNotification({
-        status: 'success',
-        title: 'Sucess',
-        message: 'Sending products list succesfully',
-      })
-    )
   } catch (error) {
     dispatch(
-      uiActions.showNotification({
-        status: 'error',
-        title: 'Error!',
-        message:
-          error.response && error.response.data.message
-            ? error.response.data.message
-            : error.message,
-      })
+      productsActions.getProductListError(
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message
+      )
     )
   }
 }
 
 export const listProductDetails = (id) => async (dispatch) => {
   try {
-    dispatch(
-      uiActions.showNotification({
-        status: 'pending',
-        title: 'Sending...',
-        message: 'Sending product',
-      })
-    )
+    dispatch(productActions.getProductRequest())
 
     const { data } = await axios.get(`/api/products/${id}`)
 
@@ -59,24 +35,13 @@ export const listProductDetails = (id) => async (dispatch) => {
         product: data || { reviews: [] },
       })
     )
-
-    dispatch(
-      uiActions.showNotification({
-        status: 'success',
-        title: 'Sucess',
-        message: 'Sending product succesfully',
-      })
-    )
   } catch (error) {
     dispatch(
-      uiActions.showNotification({
-        status: 'error',
-        title: 'Error!',
-        message:
-          error.response && error.response.data.message
-            ? error.response.data.message
-            : error.message,
-      })
+      productActions.getProductError(
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message
+      )
     )
   }
 }
