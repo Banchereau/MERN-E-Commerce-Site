@@ -15,6 +15,9 @@ import PlaceorderScreen from './pages/PlaceorderScreen'
 import OrderScreen from './pages/OrderScreen'
 import UserListScreen from './pages/UserListScreen'
 import UserEditScreen from './pages/UserEditScreen'
+import ProductListScreen from './pages/ProductListScreen'
+import ProductEditScreen from './pages/ProductEditScreen'
+import OrderListScreen from './pages/OrderListScreen'
 
 const App = () => {
   return (
@@ -42,7 +45,19 @@ const App = () => {
                 path='/admin/user/:id/edit'
                 element={<UserEditScreen />}
               ></Route>
+              <Route
+                path='/admin/productList'
+                element={<ProductListScreen />}
+              ></Route>
+              <Route
+                path='/admin/product/:id/edit'
+                element={<ProductEditScreen />}
+              ></Route>
               <Route path='/cart/:id' element={<CartScreen />}></Route>
+              <Route
+                path='/admin/orderlist'
+                element={<OrderListScreen />}
+              ></Route>
             </Routes>
           </Container>
         </main>

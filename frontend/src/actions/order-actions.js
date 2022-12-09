@@ -77,6 +77,33 @@ export const payOrder =
     }
   }
 
+export const deliverOrder = (order) => async (dispatch, getState) => {
+  try {
+    dispatch(orderActions.orderToDeliveredRequest())
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${getState().user.userInfo.token}`,
+      },
+    }
+    const { data } = await axios.put(
+      `/api/orders/${order._id}/deliver`,
+      {},
+      config
+    )
+
+    dispatch(orderActions.orderToDelivered(data))
+  } catch (error) {
+    dispatch(
+      orderActions.orderToDeliveredError(
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message
+      )
+    )
+  }
+}
+
 export const ListMyorders = () => async (dispatch, getState) => {
   try {
     dispatch(orderActions.orderGetMyordersRequest())
@@ -92,6 +119,29 @@ export const ListMyorders = () => async (dispatch, getState) => {
   } catch (error) {
     dispatch(
       orderActions.orderGetMyordersError(
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message
+      )
+    )
+  }
+}
+
+export const ListOrders = () => async (dispatch, getState) => {
+  try {
+    dispatch(orderActions.ordersGetListRequest())
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${getState().user.userInfo.token}`,
+      },
+    }
+    const { data } = await axios.get(`/api/orders`, config)
+
+    dispatch(orderActions.ordersGetList(data))
+  } catch (error) {
+    dispatch(
+      orderActions.ordersGetListError(
         error.response && error.response.data.message
           ? error.response.data.message
           : error.message

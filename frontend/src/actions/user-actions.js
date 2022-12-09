@@ -2,6 +2,7 @@ import axios from 'axios'
 import { uiActions } from '../store/ui-slice'
 import { userActions } from '../store/user-slice'
 import { orderActions } from '../store/order-slice'
+import { productActions } from '../store/product-slice'
 
 export const login = (email, password) => async (dispatch) => {
   try {
@@ -54,6 +55,8 @@ export const logout = () => (dispatch) => {
   dispatch(userActions.removeUserInfo())
   dispatch(userActions.resetUsersList())
   dispatch(orderActions.orderResetGetMyorders())
+  dispatch(orderActions.orderAddItemReset())
+  dispatch(productActions.resetProductStatus())
 }
 
 export const register = (name, email, password) => async (dispatch) => {

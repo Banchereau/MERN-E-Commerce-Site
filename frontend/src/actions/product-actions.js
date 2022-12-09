@@ -45,3 +45,76 @@ export const listProductDetails = (id) => async (dispatch) => {
     )
   }
 }
+
+export const deleteProduct = (id) => async (dispatch, getState) => {
+  try {
+    dispatch(productActions.deleteProductRequest())
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${getState().user.userInfo.token}`,
+      },
+    }
+
+    await axios.delete(`/api/products/${id}`, config)
+
+    dispatch(productActions.deleteProduct())
+  } catch (error) {
+    const message =
+      error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message
+
+    dispatch(productActions.deleteProductError(message))
+  }
+}
+
+export const createProduct = () => async (dispatch, getState) => {
+  try {
+    dispatch(productActions.createProductRequest())
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${getState().user.userInfo.token}`,
+      },
+    }
+
+    const { data } = await axios.post(`/api/products`, {}, config)
+
+    dispatch(productActions.createProductSuccess(data))
+  } catch (error) {
+    const message =
+      error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message
+
+    dispatch(productActions.createProductError(message))
+  }
+}
+
+export const updateProduct = (product) => async (dispatch, getState) => {
+  try {
+    dispatch(productActions.updateProductRequest())
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getState().user.userInfo.token}`,
+      },
+    }
+
+    const { data } = await axios.put(
+      `/api/products/${product._id}`,
+      product,
+      config
+    )
+    dispatch(productActions.updateProductSuccess(data))
+  } catch (error) {
+    const message =
+      error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message
+
+    dispatch(productActions.updateProductError(message))
+  }
+}

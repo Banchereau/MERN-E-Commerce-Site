@@ -9,9 +9,14 @@ const orderSlice = createSlice({
     orderPay: null,
     ordersPayStatus: '',
     ordersPayMessage: '',
+    orderToDeliveredStatus: '',
+    orderToDeliveredMessage: '',
     myorders: null,
     myordersStatus: '',
     myordersMessage: '',
+    ordersList: null,
+    ordersListStatus: '',
+    ordersListMessage: '',
   },
   reducers: {
     orderAddItemRequest(state) {
@@ -38,6 +43,21 @@ const orderSlice = createSlice({
     },
     orderPay(state, action) {
       state.orderPay = action.payload
+      state.ordersPayStatus = 'success'
+    },
+    orderToDeliveredRequest(state) {
+      state.orderToDeliveredStatus = 'pending'
+    },
+    orderToDeliveredError(state, action) {
+      state.orderToDeliveredStatus = 'error'
+      state.orderToDeliveredMessage = action.payload
+    },
+    orderToDelivered(state) {
+      state.orderToDeliveredStatus = 'success'
+    },
+    orderToDeliveredReset(state) {
+      state.orderToDeliveredStatus = ''
+      state.orderToDeliveredMessage = ''
     },
     orderResetPay(state) {
       state.orderPay = null
@@ -59,6 +79,17 @@ const orderSlice = createSlice({
       state.myordersStatus = ''
       state.myordersMessage = ''
       state.myorders = {}
+    },
+    ordersGetListRequest(state) {
+      state.ordersListStatus = 'pending'
+    },
+    ordersGetListError(state, action) {
+      state.ordersListStatus = 'error'
+      state.ordersListMessage = action.payload
+    },
+    ordersGetList(state, action) {
+      state.ordersListStatus = 'success'
+      state.ordersList = action.payload
     },
   },
 })

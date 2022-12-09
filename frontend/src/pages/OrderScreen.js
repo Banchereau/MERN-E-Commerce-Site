@@ -1,18 +1,23 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { PayPalButton } from 'react-paypal-button-v2'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { Link } from 'react-router-dom'
-import { Row, Col, ListGroup, Image, Card } from 'react-bootstrap'
+import { Row, Col, ListGroup, Image, Card, Button } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
-import { getOrderDetails, payOrder } from '../actions/order-actions'
+import {
+  getOrderDetails,
+  payOrder,
+  deliverOrder,
+} from '../actions/order-actions'
 import { orderActions } from '../store/order-slice'
 
 const OrderScreen = () => {
   const dispatch = useDispatch()
   const { id: orderId } = useParams()
+  const navigate = useNavigate()
   const [sdkReady, setSdkReady] = useState(false)
 
   const orderState = useSelector((state) => state.order)
@@ -20,12 +25,18 @@ const OrderScreen = () => {
     orders: order,
     ordersStatus: status,
     ordersMessage: message,
+    orderPay,
+    orderPayStatus,
+    orderToDeliveredStatus,
+    orderToDeliveredMessage,
   } = orderState
 
-  const orderPay = useSelector((state) => state.order.orderPay)
-  const notification = useSelector((state) => state.ui.notification)
+  const userInfo = useSelector((state) => state.user.userInfo)
 
   useEffect(() => {
+    if (!userInfo) {
+      navigate('/login')
+    }
     const addPayPalScript = async () => {
       const { data: clientId } = await axios.get('/api/config/paypal')
       const script = document.createElement('script')
@@ -37,9 +48,12 @@ const OrderScreen = () => {
       }
       document.body.appendChild(script)
     }
-    //addPayPalScript()
-    console.log('useEffect')
-    if (!order || orderPay) {
+    if (
+      !order ||
+      orderPayStatus === 'success' ||
+      orderToDeliveredStatus === 'success'
+    ) {
+      dispatch(orderActions.orderToDeliveredReset())
       dispatch(orderActions.orderResetPay())
       dispatch(getOrderDetails(orderId))
     } else if (!order.isPaid) {
@@ -49,12 +63,17 @@ const OrderScreen = () => {
         setSdkReady(true)
       }
     }
-  }, [dispatch, orderId, order, orderPay])
+  }, [dispatch, orderId, order, orderPayStatus, orderToDeliveredStatus])
 
   const successPaymentHandler = (paymentResult) => {
     console.log(paymentResult)
     dispatch(payOrder(orderId, paymentResult))
   }
+
+  const deliverHandler = () => {
+    dispatch(deliverOrder(order))
+  }
+
   return (
     <>
       {status === 'pending' || status === '' ? (
@@ -171,7 +190,7 @@ const OrderScreen = () => {
                   </ListGroup.Item>
                   {!order.isPaid && (
                     <ListGroup.Item>
-                      {notification.status === 'pending' && <Loader />}
+                      {orderPayStatus === 'pending' && <Loader />}
                       {!sdkReady ? (
                         <Loader />
                       ) : (
@@ -182,6 +201,28 @@ const OrderScreen = () => {
                       )}
                     </ListGroup.Item>
                   )}
+                  {orderToDeliveredStatus === 'error' && (
+                    <ListGroup.Item>
+                      <Message variant='danger'>
+                        {orderToDeliveredMessage}
+                      </Message>
+                    </ListGroup.Item>
+                  )}
+                  {orderToDeliveredStatus === 'pending' && <Loader />}
+                  {userInfo &&
+                    userInfo.isAdmin &&
+                    order.isPaid &&
+                    !order.isDelivered && (
+                      <ListGroup.Item className='mx-auto'>
+                        <Button
+                          type='button'
+                          className='btn btn-block'
+                          onClick={deliverHandler}
+                        >
+                          Mark As Delivered
+                        </Button>
+                      </ListGroup.Item>
+                    )}
                 </ListGroup>
               </Card>
             </Col>

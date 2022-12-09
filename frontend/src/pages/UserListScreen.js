@@ -19,9 +19,6 @@ const UserListScreen = () => {
     userDeleteStatus,
   } = userState
 
-  // const userDelete = useSelector((state) => state.userDelete)
-  // const { success: successDelete } = userDelete
-
   const navigate = useNavigate()
 
   useEffect(() => {
