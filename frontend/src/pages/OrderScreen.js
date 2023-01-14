@@ -23,12 +23,13 @@ const OrderScreen = () => {
   const orderState = useSelector((state) => state.order)
   const {
     orders: order,
-    ordersStatus: status,
-    ordersMessage: message,
-    orderPay,
-    orderPayStatus,
-    orderToDeliveredStatus,
-    orderToDeliveredMessage,
+    ordersLoading: loading,
+    ordersError: error,
+    ordersPayLoading,
+    ordersPaySuccess,
+    orderToDeliveredLoading,
+    orderToDeliveredError,
+    orderToDeliveredSuccess,
   } = orderState
 
   const userInfo = useSelector((state) => state.user.userInfo)
@@ -48,11 +49,7 @@ const OrderScreen = () => {
       }
       document.body.appendChild(script)
     }
-    if (
-      !order ||
-      orderPayStatus === 'success' ||
-      orderToDeliveredStatus === 'success'
-    ) {
+    if (!order || ordersPaySuccess || orderToDeliveredSuccess) {
       dispatch(orderActions.orderToDeliveredReset())
       dispatch(orderActions.orderResetPay())
       dispatch(getOrderDetails(orderId))
@@ -63,7 +60,15 @@ const OrderScreen = () => {
         setSdkReady(true)
       }
     }
-  }, [dispatch, orderId, order, orderPayStatus, orderToDeliveredStatus])
+  }, [
+    dispatch,
+    navigate,
+    userInfo,
+    orderId,
+    order,
+    ordersPaySuccess,
+    orderToDeliveredSuccess,
+  ])
 
   const successPaymentHandler = (paymentResult) => {
     console.log(paymentResult)
@@ -76,10 +81,10 @@ const OrderScreen = () => {
 
   return (
     <>
-      {status === 'pending' || status === '' ? (
+      {(loading || !order) && !error ? (
         <Loader />
-      ) : status === 'error' ? (
-        <Message variant='danger'>{message}</Message>
+      ) : error ? (
+        <Message variant='danger'>{error}</Message>
       ) : (
         <>
           <h1>Order {order._id}</h1>
@@ -190,7 +195,7 @@ const OrderScreen = () => {
                   </ListGroup.Item>
                   {!order.isPaid && (
                     <ListGroup.Item>
-                      {orderPayStatus === 'pending' && <Loader />}
+                      {ordersPayLoading && <Loader />}
                       {!sdkReady ? (
                         <Loader />
                       ) : (
@@ -201,14 +206,14 @@ const OrderScreen = () => {
                       )}
                     </ListGroup.Item>
                   )}
-                  {orderToDeliveredStatus === 'error' && (
+                  {orderToDeliveredError && (
                     <ListGroup.Item>
                       <Message variant='danger'>
-                        {orderToDeliveredMessage}
+                        {orderToDeliveredError}
                       </Message>
                     </ListGroup.Item>
                   )}
-                  {orderToDeliveredStatus === 'pending' && <Loader />}
+                  {orderToDeliveredLoading && <Loader />}
                   {userInfo &&
                     userInfo.isAdmin &&
                     order.isPaid &&

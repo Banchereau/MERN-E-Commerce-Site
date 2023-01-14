@@ -12,8 +12,8 @@ const OrderListScreen = () => {
 
   const orderState = useSelector((state) => state.order)
   const {
-    ordersListStatus: status,
-    ordersListMessage: message,
+    ordersListLoading: loading,
+    ordersListError: error,
     ordersList: orders,
   } = orderState
 
@@ -33,10 +33,10 @@ const OrderListScreen = () => {
   return (
     <>
       <h1>Orders</h1>
-      {status === 'pending' || status === '' ? (
+      {(loading || !orders) && !error ? (
         <Loader />
-      ) : status === 'error' ? (
-        <Message variant='danger'>{message}</Message>
+      ) : error ? (
+        <Message variant='danger'>{error}</Message>
       ) : (
         <Table striped bordered hover responsive className='table-sm'>
           <thead>

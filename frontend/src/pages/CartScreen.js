@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { Link, useLocation, useParams, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import {
@@ -18,7 +18,6 @@ import { orderActions } from '../store/order-slice'
 
 const CartScreen = () => {
   const { id } = useParams()
-  const [removedItem, setRemovedItem] = useState(false)
   const location = useLocation()
   const navigate = useNavigate()
 
@@ -27,7 +26,7 @@ const CartScreen = () => {
   const dispatch = useDispatch()
 
   const cart = useSelector((state) => state.cart)
-  const { cartItems, status, message } = cart
+  const { cartItems, loading, error, success } = cart
 
   useEffect(() => {
     if (id) {
@@ -36,7 +35,6 @@ const CartScreen = () => {
   }, [dispatch, id, quantity])
 
   const removeFromCartHandler = (id) => {
-    setRemovedItem(true)
     dispatch(removeFromCart(id))
   }
 
@@ -49,10 +47,10 @@ const CartScreen = () => {
     <Row>
       <Col md={8}>
         <h1>Shopping Cart</h1>
-        {status === 'pending' ? (
+        {loading ? (
           <Loader />
-        ) : status === 'error' ? (
-          <Message variant='danger'>{message}</Message>
+        ) : error ? (
+          <Message variant='danger'>{error}</Message>
         ) : cartItems.length === 0 ? (
           <Message>
             Your cart is empty <Link to='/'>Go back</Link>
@@ -100,7 +98,7 @@ const CartScreen = () => {
         )}
       </Col>
       <Col md={4}>
-        {(status === 'success' || !id) && (
+        {(success || !id) && (
           <Card>
             <ListGroup variant='flush'>
               <ListGroupItem className='mx-auto'>

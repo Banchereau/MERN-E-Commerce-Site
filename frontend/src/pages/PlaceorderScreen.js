@@ -13,7 +13,7 @@ const PlaceorderScreen = () => {
 
   const cart = useSelector((state) => state.cart)
   const order = useSelector((state) => state.order)
-  const { orders, ordersStatus: status, ordersMessage: message } = order
+  const { orders, ordersError: error, ordersSuccess: success } = order
 
   //   Calculate prices
   const addDecimals = (num) => {
@@ -31,10 +31,10 @@ const PlaceorderScreen = () => {
   ).toFixed(2)
 
   useEffect(() => {
-    if (status === 'success') {
+    if (success) {
       navigate(`/order/${orders._id}`)
     }
-  }, [navigate, status, orders])
+  }, [navigate, success, orders])
   const placeorderHandler = () => {
     const orderItems = cart.cartItems.map((item) => ({
       name: item.name,
@@ -139,11 +139,11 @@ const PlaceorderScreen = () => {
                   <Col>${totalPrice}</Col>
                 </Row>
               </ListGroup.Item>
-              <ListGroup.Item>
-                {status === 'error' && (
-                  <Message variant='danger'>{message}</Message>
-                )}
-              </ListGroup.Item>
+              {error && (
+                <ListGroup.Item>
+                  <Message variant='danger'>{error}</Message>
+                </ListGroup.Item>
+              )}
               <ListGroup.Item className='mx-auto'>
                 <Button
                   type='button'

@@ -10,12 +10,13 @@ import {
   deleteProduct,
   createProduct,
 } from '../actions/product-actions'
+import { productActions } from '../store/product-slice'
 
 const ProductListScreen = () => {
   const dispatch = useDispatch()
 
   const productsState = useSelector((state) => state.products)
-  const { products, status, message } = productsState
+  const { products, loading, error } = productsState
 
   const productState = useSelector((state) => state.product)
   const {
@@ -39,6 +40,7 @@ const ProductListScreen = () => {
       navigate(`/admin/product/${createdProduct._id}/edit`)
     } else if (createProductStatus !== 'pending') {
       dispatch(listProducts())
+      dispatch(productActions.getProductReset())
     }
   }, [
     dispatch,
@@ -81,10 +83,10 @@ const ProductListScreen = () => {
       {createProductStatus === 'error' && (
         <Message variant='danger'>{createProductMessage}</Message>
       )}
-      {status === 'pending' || status === '' ? (
+      {loading ? (
         <Loader />
-      ) : status === 'error' ? (
-        <Message variant='danger'>{message}</Message>
+      ) : error ? (
+        <Message variant='danger'>{error}</Message>
       ) : (
         <Table striped bordered hover responsive className='table-sm'>
           <thead>

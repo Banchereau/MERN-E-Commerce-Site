@@ -8,11 +8,14 @@ const userSlice = createSlice({
   name: 'user',
   initialState: {
     userInfo: userInfoFromStorage,
-    userDetails: {},
-    userDetailsStatus: '',
-    userDetailsMessage: '',
-    userUpdateDetailsStatus: '',
-    userUpdateDetailsMessage: '',
+    userInfoLoading: false,
+    userInfoError: '',
+    userDetails: null,
+    userDetailsLoading: false,
+    userDetailsError: '',
+    userUpdateDetailsLoading: false,
+    userUpdateDetailsError: '',
+    userUpdateDetailsSuccess: false,
     usersList: [],
     usersListStatus: '',
     usersListMessage: '',
@@ -22,33 +25,44 @@ const userSlice = createSlice({
   reducers: {
     getUserInfo(state, action) {
       state.userInfo = action.payload
+      state.userInfoLoading = false
+    },
+    getUserInfoRequest(state) {
+      state.userInfoLoading = true
+      state.userInfoError = ''
+    },
+    getUserInfoError(state, action) {
+      state.userInfoError = action.payload
+      state.userInfoLoading = false
     },
     removeUserInfo(state, action) {
       state.userInfo = null
     },
     getUserDetailsRequest(state) {
-      state.userDetailsStatus = 'pending'
+      state.userDetailsLoading = true
     },
     getUserDetailsError(state, action) {
-      state.userDetailsMessage = action.payload
-      state.userDetailsStatus = 'error'
+      state.userDetailsError = action.payload
+      state.userDetailsLoading = false
     },
     getUserDetails(state, action) {
       state.userDetails = action.payload
-      state.userDetailsMessage = ''
-      state.userDetailsStatus = 'success'
+      state.userDetailsError = ''
+      state.userDetailsLoading = false
     },
     updateUserDetailsRequest(state) {
-      state.userUpdateDetailsStatus = 'pending'
+      state.userUpdateDetailsLoading = true
+      state.userUpdateDetailsSuccess = false
+      state.userUpdateDetailsError = ''
     },
     updateUserDetailsError(state, action) {
-      state.userUpdateDetailsMessage = action.payload
-      state.userUpdateDetailsStatus = 'error'
+      state.userUpdateDetailsError = action.payload
+      state.userUpdateDetailsLoading = false
     },
     updateUserDetails(state, action) {
       state.userDetails = action.payload
-      state.userUpdateDetailsMessage = ''
-      state.userUpdateDetailsStatus = 'success'
+      state.userUpdateDetailsLoading = false
+      state.userUpdateDetailsSuccess = true
     },
     updateResetUserDetails(state) {
       state.userDetails = {}

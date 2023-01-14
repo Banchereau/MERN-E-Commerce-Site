@@ -4,91 +4,108 @@ const orderSlice = createSlice({
   name: 'order',
   initialState: {
     orders: null,
-    ordersStatus: '',
-    ordersMessage: '',
-    orderPay: null,
-    ordersPayStatus: '',
-    ordersPayMessage: '',
-    orderToDeliveredStatus: '',
-    orderToDeliveredMessage: '',
-    myorders: null,
-    myordersStatus: '',
-    myordersMessage: '',
+    ordersLoading: false,
+    ordersError: '',
+    ordersSuccess: false,
     ordersList: null,
-    ordersListStatus: '',
-    ordersListMessage: '',
+    ordersListLoading: false,
+    ordersListError: '',
+    myordersLoading: false,
+    myordersError: '',
+    myorders: null,
+    ordersPayLoading: false,
+    ordersPaySuccess: false,
+    ordersPayError: '',
+    ordersPay: {},
+    orderToDeliveredLoading: false,
+    orderToDeliveredError: '',
+    orderToDeliveredSuccess: false,
   },
   reducers: {
     orderAddItemRequest(state) {
-      state.ordersStatus = 'pending'
+      state.ordersLoading = true
+      state.ordersError = ''
+      state.ordersSuccess = false
     },
     orderAddItemError(state, action) {
-      state.ordersStatus = 'error'
-      state.ordersMessage = action.payload
+      state.ordersLoading = false
+      state.ordersError = action.payload
     },
     orderAddItem(state, action) {
-      state.ordersStatus = 'success'
+      state.ordersSuccess = true
+      state.ordersLoading = false
       state.orders = action.payload
     },
     orderAddItemReset(state) {
-      state.ordersStatus = ''
+      state.ordersLoading = false
+      state.ordersError = ''
+      state.ordersSuccess = false
       state.orders = null
     },
     orderPayRequest(state) {
-      state.ordersPayStatus = 'pending'
+      state.ordersPayLoading = true
+      state.ordersPaySuccess = false
+      state.ordersPayError = ''
     },
     orderPayError(state, action) {
-      state.ordersPayStatus = 'error'
-      state.ordersPayMessage = action.payload
+      state.ordersPayLoading = false
+      state.ordersPayError = action.payload
     },
     orderPay(state, action) {
-      state.orderPay = action.payload
-      state.ordersPayStatus = 'success'
+      state.ordersPayLoading = false
+      state.ordersPay = action.payload
+      state.ordersPaySuccess = true
     },
     orderToDeliveredRequest(state) {
-      state.orderToDeliveredStatus = 'pending'
+      state.orderToDeliveredLoading = true
+      state.orderToDeliveredSuccess = false
+      state.orderToDeliveredError = ''
     },
     orderToDeliveredError(state, action) {
-      state.orderToDeliveredStatus = 'error'
-      state.orderToDeliveredMessage = action.payload
+      state.orderToDeliveredLoading = false
+      state.orderToDeliveredError = action.payload
     },
     orderToDelivered(state) {
-      state.orderToDeliveredStatus = 'success'
+      state.orderToDeliveredSuccess = true
+      state.orderToDeliveredLoading = false
     },
     orderToDeliveredReset(state) {
-      state.orderToDeliveredStatus = ''
-      state.orderToDeliveredMessage = ''
+      state.orderToDeliveredLoading = false
+      state.orderToDeliveredError = ''
+      state.orderToDeliveredSuccess = false
     },
     orderResetPay(state) {
-      state.orderPay = null
-      state.ordersPayStatus = ''
-      state.ordersPayMessage = ''
+      state.ordersPay = null
+      state.ordersPaySuccess = false
+      state.ordersPayError = ''
     },
     orderGetMyordersRequest(state) {
-      state.myordersStatus = 'pending'
+      state.myordersLoading = true
     },
     orderGetMyordersError(state, action) {
-      state.myordersStatus = 'error'
-      state.myordersMessage = action.payload
+      state.myordersLoading = false
+      state.myordersError = action.payload
     },
     orderGetMyorders(state, action) {
-      state.myordersStatus = 'success'
+      state.myordersLoading = false
       state.myorders = action.payload
     },
     orderResetGetMyorders(state) {
-      state.myordersStatus = ''
-      state.myordersMessage = ''
-      state.myorders = {}
+      state.myordersError = ''
+      state.myordersLoading = false
+      state.myorders = null
     },
     ordersGetListRequest(state) {
-      state.ordersListStatus = 'pending'
+      state.ordersListLoading = true
+      state.ordersListError = ''
+      state.ordersList = null
     },
     ordersGetListError(state, action) {
-      state.ordersListStatus = 'error'
-      state.ordersListMessage = action.payload
+      state.ordersListLoading = false
+      state.ordersListError = action.payload
     },
     ordersGetList(state, action) {
-      state.ordersListStatus = 'success'
+      state.ordersListLoading = false
       state.ordersList = action.payload
     },
   },

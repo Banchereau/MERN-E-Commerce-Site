@@ -9,7 +9,7 @@ import { listProducts } from '../actions/product-actions'
 const HomeScreen = () => {
   const dispatch = useDispatch()
   const productsState = useSelector((state) => state.products)
-  const { products, status, message } = productsState
+  const { products, loading, error } = productsState
 
   useEffect(() => {
     dispatch(listProducts())
@@ -18,10 +18,10 @@ const HomeScreen = () => {
   return (
     <>
       <h1>Latest Products</h1>
-      {status === 'pending' ? (
+      {loading ? (
         <Loader />
-      ) : status === 'error' ? (
-        <Message variant='danger'>{message}</Message>
+      ) : error ? (
+        <Message variant='danger'>{error}</Message>
       ) : (
         <Row>
           {products.map((product) => (

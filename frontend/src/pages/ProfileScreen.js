@@ -20,14 +20,15 @@ const ProfileScreen = () => {
   const userDetailsState = useSelector((state) => state.user)
   const {
     userDetails: user,
-    userDetailsStatus: status,
-    userDetailsMessage: error,
-    userUpdateDetailsStatus,
-    userUpdateDetailsMessage,
+    userDetailsLoading: loading,
+    userDetailsError: error,
+    userUpdateDetailsLoading,
+    userUpdateDetailsError,
+    userUpdateDetailsSuccess,
   } = userDetailsState
   const userInfo = useSelector((state) => state.user.userInfo)
   const myordersState = useSelector((state) => state.order)
-  const { myorders, myordersStatus, myordersMessage } = myordersState
+  const { myorders, myordersLoading, myordersError } = myordersState
 
   const navigate = useNavigate()
 
@@ -35,7 +36,7 @@ const ProfileScreen = () => {
     if (!userInfo) {
       navigate('/login')
     } else {
-      if (!user.name) {
+      if (!user || !user.name) {
         dispatch(getUserDetails('profile'))
         dispatch(ListMyorders())
       } else {
@@ -58,18 +59,19 @@ const ProfileScreen = () => {
     <Row>
       <Col md={3}>
         <h2>User Profile</h2>
-        {status === 'pending' || status === '' ? (
+        {loading === true ? (
           <Loader />
-        ) : status === 'error' ? (
+        ) : error ? (
           <Message variant='danger'>{error}</Message>
         ) : (
           <div>
             {message && <Message variant='danger'>{message}</Message>}
-            {userUpdateDetailsStatus === 'success' && (
+            {userUpdateDetailsLoading && <Loader />}
+            {userUpdateDetailsSuccess && (
               <Message variant='success'>Profile Updated</Message>
             )}
-            {userUpdateDetailsStatus === 'error' && (
-              <Message variant='danger'>{userUpdateDetailsMessage}</Message>
+            {userUpdateDetailsError && (
+              <Message variant='danger'>{userUpdateDetailsError}</Message>
             )}
             <Form onSubmit={submitHandler}>
               <Form.Group controlId='name'>
@@ -117,10 +119,10 @@ const ProfileScreen = () => {
       </Col>
       <Col md={9}>
         <h2>My Orders</h2>
-        {myordersStatus === 'pending' || myordersStatus === '' ? (
+        {myordersLoading || !myorders ? (
           <Loader />
-        ) : myordersStatus === 'error' ? (
-          <Message variant='danger'>{myordersMessage}</Message>
+        ) : myordersError ? (
+          <Message variant='danger'>{myordersError}</Message>
         ) : (
           <Table striped bordered hover responsive className='table-sm'>
             <thead>

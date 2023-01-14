@@ -1,18 +1,11 @@
 import axios from 'axios'
-import { uiActions } from '../store/ui-slice'
 import { userActions } from '../store/user-slice'
 import { orderActions } from '../store/order-slice'
 import { productActions } from '../store/product-slice'
 
 export const login = (email, password) => async (dispatch) => {
   try {
-    dispatch(
-      uiActions.showNotification({
-        status: 'pending',
-        title: 'Sending...',
-        message: 'Sending login',
-      })
-    )
+    dispatch(userActions.getUserInfoRequest())
     const config = {
       headers: {
         'Content-Type': 'application/json',
@@ -26,23 +19,13 @@ export const login = (email, password) => async (dispatch) => {
 
     dispatch(userActions.getUserInfo(data))
     localStorage.setItem('userInfo', JSON.stringify(data))
-    dispatch(
-      uiActions.showNotification({
-        status: 'success',
-        title: 'Sending...',
-        message: 'login successfully sent',
-      })
-    )
   } catch (error) {
     dispatch(
-      uiActions.showNotification({
-        status: 'error',
-        title: 'Login Error!',
-        message:
-          error.response && error.response.data.message
-            ? error.response.data.message
-            : error.message,
-      })
+      userActions.getUserInfoError(
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message
+      )
     )
   }
 }
@@ -61,13 +44,8 @@ export const logout = () => (dispatch) => {
 
 export const register = (name, email, password) => async (dispatch) => {
   try {
-    dispatch(
-      uiActions.showNotification({
-        status: 'pending',
-        title: 'Sending...',
-        message: 'Sending register',
-      })
-    )
+    dispatch(userActions.getUserInfoRequest())
+
     const config = {
       headers: {
         'Content-Type': 'application/json',
@@ -83,14 +61,11 @@ export const register = (name, email, password) => async (dispatch) => {
     localStorage.setItem('userInfo', JSON.stringify(data))
   } catch (error) {
     dispatch(
-      uiActions.showNotification({
-        status: 'error',
-        title: 'Registration Error!',
-        message:
-          error.response && error.response.data.message
-            ? error.response.data.message
-            : error.message,
-      })
+      userActions.getUserInfoError(
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message
+      )
     )
   }
 }

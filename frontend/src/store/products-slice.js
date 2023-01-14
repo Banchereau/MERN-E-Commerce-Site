@@ -4,20 +4,22 @@ const productsSlice = createSlice({
   name: 'products',
   initialState: {
     products: [],
-    status: '',
-    message: '',
+    loading: false,
+    error: '',
   },
   reducers: {
     getProductListRequest(state) {
-      state.status = 'pending'
+      state.loading = true
+      state.error = ''
+      state.products = []
     },
     getProductListError(state, action) {
-      state.status = 'error'
-      state.message = action.payload
+      state.loading = false
+      state.error = action.payload
     },
     getProductList(state, action) {
       state.products = action.payload.products
-      state.status = 'success'
+      state.loading = false
     },
   },
 })

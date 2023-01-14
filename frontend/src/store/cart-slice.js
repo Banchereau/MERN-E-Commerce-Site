@@ -18,16 +18,19 @@ const cartSlice = createSlice({
     cartItems: cartItemsFromStorage,
     shippingAddress: cartAddressFromStorage,
     paymentMethod: cartPaymentMethodFromStorage,
-    status: '',
-    message: '',
+    loading: false,
+    error: '',
+    success: false,
   },
   reducers: {
     cartAddItemRequest(state) {
-      state.status = 'pending'
+      state.loading = true
+      state.error = ''
+      state.success = false
     },
     cartAddItemError(state, action) {
-      state.status = 'error'
-      state.message = action.payload
+      state.loading = false
+      state.error = action.payload
     },
     cartAddItem(state, action) {
       const item = action.payload
@@ -42,7 +45,8 @@ const cartSlice = createSlice({
         state.cartItems.push(item)
         //console.log('cart-slice add new item state')
       }
-      state.status = 'success'
+      state.loading = false
+      state.success = true
     },
     cartRemoveItem(state, action) {
       const id = action.payload

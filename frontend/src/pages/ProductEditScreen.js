@@ -26,8 +26,9 @@ const ProductEditScreen = () => {
   const productState = useSelector((state) => state.product)
   const {
     product,
-    status,
-    message,
+    getProductStatus,
+    getProductLoading,
+    getProductErrorMsg,
     updateProductStatus,
     updateProductMessage,
   } = productState
@@ -38,7 +39,7 @@ const ProductEditScreen = () => {
       navigate('/admin/productlist')
     } else {
       dispatch(productActions.createProductReset())
-      if (!product.name || product._id !== productId) {
+      if ((!product.name || product._id !== productId) && !getProductStatus) {
         dispatch(productActions.updateProductReset())
         dispatch(listProductDetails(productId))
       } else {
@@ -51,7 +52,14 @@ const ProductEditScreen = () => {
         setDescription(product.description)
       }
     }
-  }, [dispatch, navigate, product, productId, updateProductStatus])
+  }, [
+    dispatch,
+    navigate,
+    product,
+    productId,
+    updateProductStatus,
+    getProductStatus,
+  ])
 
   const uploadFileHandler = async (e) => {
     const file = e.target.files[0]
@@ -103,10 +111,10 @@ const ProductEditScreen = () => {
           <Message variant='danger'>{updateProductMessage}</Message>
         )}
         <h1>Edit Product</h1>
-        {status === 'pending' ? (
+        {getProductLoading ? (
           <Loader />
-        ) : status === 'error' ? (
-          <Message variant='danger'>{message}</Message>
+        ) : getProductErrorMsg ? (
+          <Message variant='danger'>{getProductErrorMsg}</Message>
         ) : (
           <Form onSubmit={submitHandler}>
             <Form.Group controlId='name'>

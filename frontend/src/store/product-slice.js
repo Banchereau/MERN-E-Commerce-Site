@@ -4,8 +4,9 @@ const productSlice = createSlice({
   name: 'product',
   initialState: {
     product: { reviews: [] },
-    status: '',
-    message: '',
+    getProductStatus: '',
+    getProductLoading: false,
+    getProductErrorMsg: '',
     deleteStatus: '',
     deleteMessage: '',
     createProductStatus: '',
@@ -17,15 +18,26 @@ const productSlice = createSlice({
   },
   reducers: {
     getProductRequest(state) {
-      state.status = 'pending'
+      state.getProductLoading = true
+      state.getProductStatus = 'pending'
+      state.product = { reviews: [] }
+      state.getProductErrorMsg = ''
     },
     getProductError(state, action) {
-      state.status = 'error'
-      state.message = action.payload
+      state.getProductLoading = false
+      state.getProductStatus = 'error'
+      state.getProductErrorMsg = action.payload
     },
     getProduct(state, action) {
       state.product = action.payload.product
-      state.status = 'success'
+      state.getProductLoading = false
+      state.getProductStatus = 'success'
+    },
+    getProductReset(state) {
+      state.product = { reviews: [] }
+      state.getProductLoading = false
+      state.getProductStatus = ''
+      state.getProductErrorMsg = ''
     },
     deleteProductRequest(state) {
       state.deleteStatus = 'pending'

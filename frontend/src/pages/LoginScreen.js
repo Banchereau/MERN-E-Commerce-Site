@@ -13,12 +13,16 @@ const LoginScreen = () => {
 
   const dispatch = useDispatch()
 
-  const userInfo = useSelector((state) => state.user.userInfo)
+  const userInfoState = useSelector((state) => state.user)
+  const {
+    userInfo,
+    userInfoLoading: loading,
+    userInfoError: error,
+  } = userInfoState
 
   const location = useLocation()
   const redirect = location.search ? location.search.split('=')[1] : ''
   const navigate = useNavigate()
-  const notification = useSelector((state) => state.ui.notification)
 
   useEffect(() => {
     if (userInfo) {
@@ -34,13 +38,11 @@ const LoginScreen = () => {
   return (
     <FormContainer>
       <h1>Sign In</h1>
-      {notification.status === 'pending' ? (
+      {loading ? (
         <Loader />
       ) : (
         <div>
-          {notification.status === 'error' && (
-            <Message variant='danger'>{notification.message}</Message>
-          )}
+          {error && <Message variant='danger'>{error}</Message>}
           <Form onSubmit={submitHandler}>
             <Form.Group controlId='email'>
               <Form.Label>Email Address</Form.Label>

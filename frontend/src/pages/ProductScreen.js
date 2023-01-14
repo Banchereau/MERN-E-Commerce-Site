@@ -22,7 +22,11 @@ const ProductScreen = () => {
   const navigate = useNavigate()
 
   const productState = useSelector((state) => state.product)
-  const { product, status, message } = productState
+  const {
+    product,
+    getProductLoading: loading,
+    getProductErrorMsg: error,
+  } = productState
 
   useEffect(() => {
     dispatch(listProductDetails(id))
@@ -36,10 +40,10 @@ const ProductScreen = () => {
       <Link className='btn btn-dark my-3 rounded' to='/'>
         Go back
       </Link>
-      {status === 'pending' ? (
+      {loading ? (
         <Loader />
-      ) : status === 'error' ? (
-        <Message variant='danger'>{message}</Message>
+      ) : error ? (
+        <Message variant='danger'>{error}</Message>
       ) : (
         <div>
           <div className='hidden-xs'>
