@@ -15,6 +15,9 @@ const productSlice = createSlice({
     updateProductStatus: '',
     updateProductMessage: '',
     updatedProduct: { reviews: [] },
+    createReviewLoading: false,
+    createReviewSuccess: false,
+    createReviewError: '',
   },
   reducers: {
     getProductRequest(state) {
@@ -90,6 +93,22 @@ const productSlice = createSlice({
       state.message = ''
       state.deleteStatus = ''
       state.deleteMessage = ''
+    },
+    createReviewRequest(state) {
+      state.createReviewLoading = true
+    },
+    createReviewDone(state) {
+      state.createReviewLoading = false
+      state.createReviewSuccess = true
+    },
+    createReviewFailed(state, action) {
+      state.createReviewLoading = false
+      state.createReviewError = action.payload
+    },
+    createReviewReset(state) {
+      state.createReviewLoading = false
+      state.createReviewSuccess = false
+      state.createReviewError = ''
     },
   },
 })
